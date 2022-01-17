@@ -5,3 +5,4 @@ A Repository with various sample Braintree integrations for testing. Checkout a 
  * flask_example
  * spring_example
  * express_example
+ * graphql_react
