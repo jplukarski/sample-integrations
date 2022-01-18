@@ -1,0 +1,218 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title>Joe's Old Fashioned Donut Shoppe</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="js/script.js"></script>
+
+</head>
+
+<body>
+
+
+    <div class="container">
+
+        <div class="payment-card col-md-8 col-md-offset-3">
+
+            <div class="jumbotron">
+                <h2>Joe's Olde-Fashioned Doughnut Shoppe.</h2>
+            </div>
+
+            <img src="img/donut.jpeg" alt="Yummy Donuts" class="img-thumbnail what-to-do">
+            <div class="buy-once">
+
+                <form action="/process" method="post" id="my-sample-form">
+                    <input type="hidden" name="payment_method_nonce">
+
+                    <div class="jumbotron centered-content">
+                        <h2 class="">Enter Card Details</h2>
+                    </div>
+
+                    <label for="card-number">Card Number</label>
+                    <div class="form-control" id="card-number"></div>
+
+                    <label for="cvv">CVV</label>
+                    <div class="form-control" id="cvv"></div>
+
+                    <label for="expiration-date">Expiration Date</label>
+                    <div class="form-control" id="expiration-date"></div>
+
+                    <label for="postal-code">Postal Code:</label>
+                    <div class="form-control" id="postal-code"></div>
+
+                    <input id="my-submit" type="submit" value="Checkout" class="btn btn-dark btn-lg btn-block"
+                        disabled />
+                </form>
+
+            </div>
+
+            <div id="paypal-button"></div>
+
+
+
+        </div>
+
+    </div>
+
+
+    <script src="https://js.braintreegateway.com/web/3.84.0/js/client.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.84.0/js/hosted-fields.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.83.0/js/hosted-fields.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.84.0/js/paypal-checkout.js"></script>
+    <script>
+        var submitBtn = document.getElementById('my-submit');
+        var form = document.getElementById('my-sample-form');
+
+        braintree.client.create({
+            authorization: 'sandbox_ktmg6gdf_9h5f3t735xfwwx63'
+            // authorization: '<%- clientToken %>'
+        }, clientDidCreate);
+
+        function clientDidCreate(err, client) {
+            if (err) {
+                console.log(err)
+            }
+            braintree.hostedFields.create({
+                client: client,
+                styles: {
+                    'input': {
+                        'font-size': '12pt',
+                        'color': '#3A3A3A',
+                    },
+                    '.valid': {
+                        'highlight-color': 'green',
+                        'font-size': '72'
+                    }
+                },
+                fields: {
+                    number: {
+                        selector: '#card-number',
+                        placeholder: "4111 1111 1111 1111"
+                    },
+                    cvv: {
+                        selector: '#cvv',
+                        placeholder: "123"
+                    },
+                    expirationDate: {
+                        selector: '#expiration-date',
+                        placeholder: "10/20"
+                    },
+                    postalCode: {
+                        selector: '#postal-code',
+                        placeholder: '90210'
+                    }
+                }
+            }, hostedFieldsDidCreate);
+            braintree.paypalCheckout.create({
+                client: client
+            }, payPalCheckoutDidCreate);
+        }
+
+        function payPalCheckoutDidCreate(err, paypalCheckout) {
+            this.paypalCheckoutRef = paypalCheckout
+            console.log('meep')
+            console.log(this.paypalCheckoutRef === paypalCheckout)
+            if (err) {
+                console.error('Error creating PayPal Checkout:', err);
+                return;
+            }
+            paypalCheckout.loadPayPalSDK({
+                commit: true,
+                currency: 'EUR',
+                intent: 'capture',
+                vault: false,
+                dataAttributes: {
+                    amount: '10.00'
+                }
+            }, function () {
+                paypal.Buttons({
+                    fundingSource: paypal.FUNDING.PAYPAL,
+                    createOrder: function () {
+                        return paypalCheckout.createPayment({
+                            locale: 'nl_NL',
+                            flow: 'checkout', // Required
+                            amount: 10, // Required
+                            currency: 'EUR', // Required, must match the currency passed in with loadPayPalSDK
+                            intent: 'capture', // Must match the intent passed in with loadPayPalSDK
+                        });
+                    },
+
+                    onApprove: function (data, actions) {
+                        return paypalCheckout.tokenizePayment(data, function (err, payload) {
+                            // Submit `payload.nonce` to your server
+                            console.log(payload)
+                            form['payment_method_nonce'].value = payload.nonce;
+                            form.submit();
+                        });
+                    },
+
+                    onCancel: function (data) {
+                        console.log('PayPal payment cancelled', JSON.stringify(data, 0, 2));
+                    },
+
+                    onError: function (err) {
+                        console.error('PayPal error', err);
+                    }
+
+                }).render('#paypal-button')
+            })
+        }
+
+        function hostedFieldsDidCreate(err, hostedFields) {
+            if (err) {
+                console.log(err)
+            }
+            hostedFields.getSupportedCardTypes().then(cardTypes => {
+                console.log(cardTypes)
+            })
+            submitBtn.addEventListener('click', submitHandler.bind(null, hostedFields));
+            submitBtn.removeAttribute('disabled');
+        }
+
+        function submitHandler(hostedFields, event) {
+            event.preventDefault();
+            submitBtn.setAttribute('disabled', 'disabled');
+
+            hostedFields.tokenize({
+                billingAddress: {
+                    countryName: 'United States',
+                    firstName: 'Test',
+                    lastName: 'Test2',
+                    locality: "Chicago",
+                    postalCode: "60606",
+                    region: "IL",
+                    sameAsDelivery: false,
+                    streetAddress: '3457 Mission Street',
+                    validAddress: true
+                }
+            }, function (err, payload) {
+                if (err) {
+                    submitBtn.removeAttribute('disabled');
+                    console.error(err);
+                    alert("That is not a valid debit/credit card.")
+                } else {
+                    form['payment_method_nonce'].value = payload.nonce;
+                    console.log(payload)
+                    form.submit();
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
