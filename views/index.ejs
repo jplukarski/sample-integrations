@@ -1,0 +1,190 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title>Joe's Old Fashioned Donut Shoppe</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+        </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+        </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="js/script.js"></script>
+
+</head>
+
+<body>
+
+
+    <div class="container">
+
+        <div class="payment-card col-md-8 col-md-offset-3">
+
+            <div class="jumbotron">
+                <h2>Joe's Olde-Fashioned Doughnut Shoppe.</h2>
+            </div>
+
+            <img src="img/donut.jpeg" alt="Yummy Donuts" class="img-thumbnail what-to-do">
+            <div class="buy-once">
+
+                <form class="" action="/process" method="post" id="my-sample-form">
+                    <input type="hidden" name="payment_method_nonce" id="nonce">
+
+                    <div class="jumbotron centered-content">
+                        <h2 class="">Enter Card Details</h2>
+                    </div>
+
+                    <label for="card-number">Card Number</label>
+                    <div class="form-control" id="card-number"></div>
+
+                    <label for="cvv">CVV</label>
+                    <div class="form-control" id="cvv"></div>
+
+                    <label for="expiration-month">Expiration Month</label>
+                    <div class="form-control" id="expiration-month"></div>
+
+                    <label for="expiration-year">Expiration Year</label>
+                    <div class="form-control" id="expiration-year"></div>
+
+                    <input id="my-submit" type="submit" value="Checkout" class="btn btn-dark btn-lg btn-block"
+                        disabled />
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://js.braintreegateway.com/web/3.81.0/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.81.0/js/hosted-fields.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.81.0/js/three-d-secure.min.js"></script>
+    <script>
+        var submitBtn = document.getElementById('my-submit');
+        var form = document.getElementById('my-sample-form');
+
+        braintree.client.create({
+            authorization: '<%- clientToken %>'
+        }, function (clientErr, clientInstance) {
+            if (clientErr) {
+                console.log("Error loading the client: " + clientErr)
+                return
+            }
+            braintree.threeDSecure.create({
+                client: clientInstance,
+                version: 2
+            }, function (threeDSecureErr, threeDSecureInstance) {
+                if (threeDSecureErr) {
+                    console.log("Error creating 3DS2 component " + threeDSecureErr)
+                    return
+                }
+                threeDSecure = threeDSecureInstance
+            });
+
+            braintree.hostedFields.create({
+                client: clientInstance,
+                styles: {
+                    'input': {
+                        'font-size': '12pt',
+                        'color': '#3A3A3A',
+                    },
+                    '.valid': {
+                        'color': 'green'
+                    }
+                },
+                fields: {
+                    number: {
+                        selector: '#card-number',
+                        placeholder: "4111 1111 1111 1111"
+                    },
+                    cvv: {
+                        selector: '#cvv',
+                        placeholder: "123"
+                    },
+                    expirationMonth: {
+                        selector: '#expiration-date',
+                        placeholder: "10/20",
+                        
+                    },
+
+                }
+            }, function (hostedfieldsErr, hostedFieldsInstance) {
+                if (hostedfieldsErr) {
+                    console.log("Error creating Hosted Fields " + hostedfieldsErr)
+                    return
+                }
+                submitBtn.removeAttribute('disabled');
+                submitBtn.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
+                        if (tokenizeErr) {
+                            console.error("There was a tokenize error" + tokenizeErr);
+                            return;
+                        }
+
+                        var my3dSContainer = document.createElement('div');
+                        threeDSecure.verifyCard({
+                            amount: '10',
+                            nonce: payload.nonce,
+                            bin: payload.bin,
+                            email: 'test@example.com',
+                            billingAddress: {
+                                givenName: 'Jill',
+                                surname: 'Doe',
+                                phoneNumber: '8101234567',
+                                streetAddress: '555 Smith St.',
+                                extendedAddress: '#5',
+                                locality: 'Oakland',
+                                region: 'CA',
+                                postalCode: '12345',
+                                countryCodeAlpha2: 'US'
+                            },
+                            additionalInformation: {
+                                acsWindowSize: '01',
+                                workPhoneNumber: '5555555555',
+                                shippingGivenName: 'Jill',
+                                shippingSurname: 'Doe',
+                                shippingAddress: {
+                                    streetAddress: '555 Smith st',
+                                    extendedAddress: '#5',
+                                    locality: 'Oakland',
+                                    region: 'CA',
+                                    postalCode: '12345',
+                                    countryCodeAlpha2: 'US'
+                                },
+                                shippingPhone: '8101234567'
+                            },
+                            onLookupComplete: function (data, next) {
+                                // use `data` here, then call `next()`
+                                next();
+                            }
+                        }, function (err, response) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            console.log("this happened")
+                            console.log(response)
+                            console.log('Got a nonce: ' + response.nonce);
+                            document.querySelector('#nonce').value = response
+                                .nonce;
+                            form.submit();
+                        })
+                    })
+                }, false)
+
+            })
+        });
+    </script>
+</body>
+
+</html>
