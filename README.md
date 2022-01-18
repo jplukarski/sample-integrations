@@ -7,3 +7,6 @@ A Repository with various sample Braintree integrations for testing. Checkout a 
  * express_example
  * graphql_react
  * hosted_fields_3ds_node
+ * joes_donut_shop
+ * react_integration
+ * sinatra_3ds
