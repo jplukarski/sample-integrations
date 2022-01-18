@@ -6,3 +6,4 @@ A Repository with various sample Braintree integrations for testing. Checkout a 
  * spring_example
  * express_example
  * graphql_react
+ * hosted_fields_3ds_node
