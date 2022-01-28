@@ -37,7 +37,7 @@
     </div>
 
     <script src="https://js.braintreegateway.com/web/dropin/1.32.1/js/dropin.min.js"></script>
-    <!-- <script src="https://js.braintreegateway.com/web/3.61.0/js/client.min.js"></script> -->
+    <script src="https://js.braintreegateway.com/web/3.61.0/js/client.min.js"></script>
     <script>
         var total = 13
         var form = document.querySelector('#payment-form');
