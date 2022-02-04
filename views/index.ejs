@@ -65,12 +65,16 @@
 
     </div>
 
-    <script src="https://js.braintreegateway.com/web/3.81.0/js/client.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.81.0/js/hosted-fields.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.81.0/js/three-d-secure.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.2/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.2/js/hosted-fields.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.2/js/three-d-secure.min.js"></script>
     <script>
         var submitBtn = document.getElementById('my-submit');
         var form = document.getElementById('my-sample-form');
+        const cardNumber = document.getElementById('card-number')
+        const expirationMonth = document.getElementById('expiration-month')
+        const expirationYear = document.getElementById('expiration-year')
+        const cvv = document.getElementById('cvv')
 
         braintree.client.create({
             authorization: '<%- clientToken %>'
@@ -103,16 +107,21 @@
                 },
                 fields: {
                     number: {
-                        selector: '#card-number',
+                        container: cardNumber,
                         placeholder: "4111 1111 1111 1111"
                     },
                     cvv: {
-                        selector: '#cvv',
+                        container: cvv,
                         placeholder: "123"
                     },
                     expirationMonth: {
-                        selector: '#expiration-date',
-                        placeholder: "10/20",
+                        container: expirationMonth,
+                        placeholder: "01",
+                        
+                    },
+                    expirationYear: {
+                        container: expirationYear,
+                        placeholder: "2022",
                         
                     },
 
