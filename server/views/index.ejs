@@ -123,41 +123,35 @@
         }
 
         function payPalCheckoutDidCreate(err, paypalCheckout) {
-            this.paypalCheckoutRef = paypalCheckout
-            console.log('meep')
-            console.log(this.paypalCheckoutRef === paypalCheckout)
             if (err) {
                 console.error('Error creating PayPal Checkout:', err);
                 return;
             }
             paypalCheckout.loadPayPalSDK({
-                commit: true,
-                currency: 'EUR',
-                intent: 'capture',
-                vault: false,
-                dataAttributes: {
-                    amount: '10.00'
-                }
+                currency: 'USD',
+                intent: 'capture'
             }, function () {
                 paypal.Buttons({
                     fundingSource: paypal.FUNDING.PAYPAL,
                     createOrder: function () {
                         return paypalCheckout.createPayment({
-                            locale: 'nl_NL',
                             flow: 'checkout', // Required
                             amount: 10, // Required
-                            currency: 'EUR', // Required, must match the currency passed in with loadPayPalSDK
+                            currency: 'USD', // Required, must match the currency passed in with loadPayPalSDK
                             intent: 'capture', // Must match the intent passed in with loadPayPalSDK
                         });
                     },
 
                     onApprove: function (data, actions) {
+                        console.log('Data')
+                        console.log(data)
                         return paypalCheckout.tokenizePayment(data, function (err, payload) {
                             // Submit `payload.nonce` to your server
                             console.log(payload)
                             form['payment_method_nonce'].value = payload.nonce;
-                            form.submit();
+                            // form.submit();
                         });
+
                     },
 
                     onCancel: function (data) {

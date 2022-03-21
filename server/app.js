@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 app.get('/', function (request, response) {
   gateway.clientToken.generate({
-    merchantAccountId: 'blahblakjsfgk'
+    merchantAccountId: 'joepenterprizes'
   }, function (err, res) {
     console.log(res)
     response.render('index', {
@@ -45,8 +45,9 @@ app.post('/process', parseUrlEnconded, function (request, response) {
   var transaction = request.body;
   console.log("My Transaction: ", JSON.stringify(transaction))
   gateway.transaction.sale({
-    amount: "4002.4",
+    amount: '10',
     paymentMethodNonce: nonceFromTheClient,
+    merchantAccountId: 'joepenterprizes',
     options: {
       storeInVaultOnSuccess: true
     }
