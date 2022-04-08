@@ -42,8 +42,8 @@
     <script>
         var total = 13
         var form = document.querySelector('#payment-form');
-        // var client_token = "<?php echo($gateway->clientToken()->generate(["merchantAccountId" => "joepenterprizes", 'customerId' => 409077689])); ?>";
-        var client_token = "<?php echo($gateway->clientToken()->generate(['customerId' => 409077689])); ?>";
+        var client_token = "<?php echo($gateway->clientToken()->generate(["merchantAccountId" => "joepenterprizes", 'customerId' => 409077689])); ?>";
+        // var client_token = "<?php echo($gateway->clientToken()->generate(['customerId' => 409077689])); ?>";
         braintree.dropin.create({
           authorization: client_token,
           container: '#bt-dropin',
