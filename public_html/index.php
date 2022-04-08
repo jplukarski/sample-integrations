@@ -31,30 +31,30 @@
                 </section>
 
                 <input id="nonce" name="payment_method_nonce" type="hidden" />
-                <button class="button" type="submit"><span>Test Transaction</span></button>
-            </form>
+                <button class="button" id="txnButton" type="submit" ><span>Test Transaction</span></button>
+              </form>
         </div>
     </div>
 
-    <script src="https://js.braintreegateway.com/web/dropin/1.32.1/js/dropin.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.61.0/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/dropin/1.32.1/js/dropin.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.61.0/js/client.js"></script>
+
     <script>
         var total = 13
         var form = document.querySelector('#payment-form');
-        // var client_token = "<?php echo($gateway->clientToken()->generate()); ?>";
-        var client_token = "<?php echo($gateway->clientToken()->generate(['customerId' => 409077689])); ?>";
-console.log(client_token)
-      
-        var threeDSecure;
+        var client_token = "<?php echo($gateway->clientToken()->generate(["merchantAccountId" => "joepenterprizes", 'customerId' => 409077689])); ?>";
+        // var client_token = "<?php echo($gateway->clientToken()->generate(['customerId' => 409077689])); ?>";
         braintree.dropin.create({
           authorization: client_token,
           container: '#bt-dropin',
-          card: {
-    cardholderName: true
-  },
-          threeDSecure: {
-            amount: 10
-          },
+          paypal: {
+            flow: 'checkout',
+            intent: 'authorize',
+            amount: '100',
+            currency: 'USD',
+            locale: 'en_US',
+            enableShippingAddress: true
+        }
         }, function (createErr, instance) {
           if (createErr) {
             console.log('Create Error', createErr);
