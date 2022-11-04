@@ -70,16 +70,15 @@
     </div>
 
 
-    <script src="https://js.braintreegateway.com/web/3.84.0/js/client.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.84.0/js/hosted-fields.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.84.0/js/paypal-checkout.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.88.3/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.88.3/js/hosted-fields.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.88.3/js/paypal-checkout.min.js"></script>
     <script>
         var submitBtn = document.getElementById('my-submit');
         var form = document.getElementById('my-sample-form');
 
         braintree.client.create({
-            authorization: 'sandbox_ktmg6gdf_9h5f3t735xfwwx63'
-            // authorization: '<%- clientToken %>'
+            authorization: '<%- clientToken %>'
         }, clientDidCreate);
 
         function clientDidCreate(err, client) {
@@ -88,16 +87,6 @@
             }
             braintree.hostedFields.create({
                 client: client,
-                styles: {
-                    'input': {
-                        'font-size': '12pt',
-                        'color': '#3A3A3A',
-                    },
-                    '.valid': {
-                        'highlight-color': 'green',
-                        'font-size': '72'
-                    }
-                },
                 fields: {
                     number: {
                         selector: '#card-number',

@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config({path: '../.env'});
+console.log(process.env)
 var express = require('express');
 var app = express();
 var braintree = require('braintree');
@@ -8,11 +10,11 @@ var parseUrlEnconded = bodyParser.urlencoded({
   extended: false
 });
 
-var gateway = braintree.connect({
+var gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
-  merchantId: '',
-  publicKey: '',
-  privateKey: ''
+  merchantId: process.env.BT_MERCHANT_ID,
+  publicKey: process.env.BT_PUBLIC_KEY,
+  privateKey: process.env.BT_PRIVATE_KEY
 });
 
 app.use(express.static('public'));
@@ -20,25 +22,25 @@ app.use(express.static('public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-app.get('/', function (request, response) {
-  gateway.clientToken.generate({
-    merchantAccountId: 'joepenterprizes'
-  }, function (err, res) {
-    console.log(res)
-    response.render('index', {
-      clientToken: res.clientToken
-    });
-  });
-});
-
 // app.get('/', function (request, response) {
-//   gateway.clientToken.generate({}, function (err, res) {
+//   gateway.clientToken.generate({
+//     merchantAccountId: 'joepenterprizes'
+//   }, function (err, res) {
 //     console.log(res)
 //     response.render('index', {
 //       clientToken: res.clientToken
 //     });
 //   });
 // });
+
+app.get('/', function (request, response) {
+  gateway.clientToken.generate({}, function (err, res) {
+    console.log(res)
+    response.render('index', {
+      clientToken: res.clientToken
+    });
+  });
+});
 
 app.post('/process', parseUrlEnconded, function (request, response) {
   var nonceFromTheClient = request.body.payment_method_nonce;
