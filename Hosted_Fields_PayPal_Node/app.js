@@ -1,7 +1,6 @@
 'use strict';
 
 require('dotenv').config({path: '../.env'});
-console.log(process.env)
 var express = require('express');
 var app = express();
 var braintree = require('braintree');
