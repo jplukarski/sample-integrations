@@ -30,3 +30,7 @@ build/Release
 node_modules
 
 .env
+composer.phar
+.env
+/vendor/
+*.log
