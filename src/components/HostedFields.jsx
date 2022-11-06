@@ -82,7 +82,7 @@ export default function HostedFields(props) {
         fetch('https://payments.sandbox.braintree-api.com/graphql', {
             method: 'POST',
             headers: {
-                'Authorization': 'NXJ4ZzNrNXNudGRuaDQ4aDo5ODZhNjZiYzJjYWYxMTk3MTA1YzNjMzY2YjRmOTFjOA==',
+                'Authorization': process.env.REACT_APP_GRAPHQL_AUTH, 
                 'Braintree-Version': '2019-01-01',
                 'Content-Type': 'application/json',
             },

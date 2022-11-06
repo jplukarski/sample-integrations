@@ -13,7 +13,7 @@ export default function Checkout() {
         fetch('https://payments.sandbox.braintree-api.com/graphql', {
             method: 'POST',
             headers: {
-                'Authorization': 'my_authorization',
+                'Authorization': process.env.REACT_APP_GRAPHQL_AUTH,
                 'Braintree-Version': '2022-01-01',
                 'Content-Type': 'application/json',
             },
@@ -24,8 +24,7 @@ export default function Checkout() {
                 if (err) {
                     console.log(err)
                 } else {
-                    console.log(res)
-                    // setClientToken(res.data.createClientToken.clientToken)
+                    setClientToken(res.data.createClientToken.clientToken)
                 }
             })
     }
