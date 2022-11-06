@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-// import hostedFields from 'braintree-web/hosted-fields'
-// import client from 'braintree-web/client'
+import hostedFields from 'braintree-web/hosted-fields'
+import client from 'braintree-web/client'
 
 export default function HostedFields(props) {
     const [nonce, setNonce] = useState('')

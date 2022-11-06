@@ -20,8 +20,13 @@ export default function Checkout() {
             body: '{"query": "mutation {createClientToken{ clientToken }}"}'
         })
             .then(res => res.json())
-            .then(result => {
-                setClientToken(result.data.createClientToken.clientToken)
+            .then((res, err)=> {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(res)
+                    // setClientToken(res.data.createClientToken.clientToken)
+                }
             })
     }
 
