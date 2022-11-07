@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import CheckoutForm from '../components/HostedFields'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card'
+import Image from 'react-bootstrap/Image'
+import donut from '../assets/images/donut.jpeg'
 
 export default function HostedFields() {
     const [clientToken, setClientToken] = useState('')
@@ -30,7 +36,22 @@ export default function HostedFields() {
 
     return(
         <>
-            {clientToken ? <CheckoutForm clientToken={clientToken}/> : "loading..."}
+            <Container>
+            <Card
+            className="d-flex justify-content-center align-items-center">
+
+                <Image
+                rounded
+                style={{height:'75%', width:'75%', padding:'2em'}}
+                src={donut}
+                />
+                <Card.Body>
+                    <Row>
+                        {clientToken ? <CheckoutForm clientToken={clientToken}/> : "loading..."}
+                    </Row>
+                </Card.Body>
+            </Card>
+            </Container>
         </>
     )
 }

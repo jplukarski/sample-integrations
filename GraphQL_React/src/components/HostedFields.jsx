@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import hostedFields from 'braintree-web/hosted-fields'
 import client from 'braintree-web/client'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 export default function HostedFields(props) {
     const [nonce, setNonce] = useState('')
+    const formRef = useRef()
+    const cardNumberRef = useRef()
+    const cvvRef = useRef()
+    const expiryRef = useRef()
+    const postalCodeRef = useRef()
+
     useEffect(() => {
         if (nonce === '') {
             createHostedFields(props.clientToken)
@@ -39,19 +47,19 @@ export default function HostedFields(props) {
             },
             fields: {
                 number: {
-                    selector: '#card-number',
+                    container: '#card-number',
                     placeholder: "4111 1111 1111 1111"
                 },
                 cvv: {
-                    selector: '#cvv',
+                    container: '#cvv',
                     placeholder: "123"
                 },
                 expirationDate: {
-                    selector: '#expiration-date',
+                    container: '#expiration-date',
                     placeholder: "10/20"
                 },
                 postalCode: {
-                    selector: '#postal-code',
+                    container: '#postal-code',
                     placeholder: '90210'
                 }
             }
@@ -60,14 +68,14 @@ export default function HostedFields(props) {
             if (hostedFieldsErr) {
                 alert(hostedFieldsErr)
             }
+            console.log(hostedFieldsInstance)
             hostedFieldsDidCreate(hostedFieldsInstance)
         })
     }
 
     function hostedFieldsDidCreate(hostedFieldsInstance) {
-        const form = document.querySelector('#my-sample-form')
-
-        form.addEventListener('submit', function (event) {
+        console.log(formRef)
+        formRef.current.addEventListener('submit', function (event) {
             event.preventDefault()
             hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
                 if (tokenizeErr) {
@@ -98,24 +106,34 @@ export default function HostedFields(props) {
     }
 
     return (
-        <form action="/" method="post" id="my-sample-form">
-            <div>
+        <>
+            <Form action="/" method="post" ref={formRef}>
+
                 <h2>Enter Card Details</h2>
-            </div>
+                <Form.Group className="mb-3">
+                    <Form.Label htmlFor="card-number">Card Number</Form.Label>
+                    <Form.Control id="card-number" ref={cardNumberRef}></Form.Control>
+                </Form.Group>
 
-            <label htmlFor="card-number">Card Number</label>
-            <div id="card-number"></div>
+                <Form.Group>
+                    <Form.Label htmlFor="cvv">CVV</Form.Label>
+                    <Form.Control id="cvv" ref={cvvRef}></Form.Control>
+                </Form.Group>
 
-            <label htmlFor="cvv">CVV</label>
-            <div id="cvv"></div>
+                <Form.Group>
+                    <Form.Label htmlFor="expiration-date">Expiry Date</Form.Label>
+                    <Form.Control id="expiration-date" ref={expiryRef}></Form.Control>
+                </Form.Group>
+                    
+                <Form.Group>
+                    <Form.Label htmlFor="postal-code">Postal Code</Form.Label>
+                    <Form.Control id="postal-code" ref={postalCodeRef}></Form.Control>
+                </Form.Group>
 
-            <label htmlFor="expiration-date">Expiration Date</label>
-            <div id="expiration-date"></div>
-
-            <label htmlFor="postal-code">Postal Code:</label>
-            <div id="postal-code"></div>
-
-            <input id="my-submit" type="submit" value="Checkout" />
-        </form>
+                <Form.Group>
+                    <Button id="my-submit" type="submit">Checkout</Button>
+                </Form.Group>
+            </Form>
+        </>
     )
 }
