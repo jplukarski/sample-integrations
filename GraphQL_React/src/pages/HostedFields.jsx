@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import DropIn from '../components/DropIn'
-import HostedFields from '../components/HostedFields'
+import CheckoutForm from '../components/HostedFields'
 
-
-export default function Checkout() {
+export default function HostedFields() {
     const [clientToken, setClientToken] = useState('')
-    
-    useEffect(() => {
+
+    useEffect(()=>{
         getClientToken()
-    }, [])
+    },[])
 
     function getClientToken() {
         fetch('https://payments.sandbox.braintree-api.com/graphql', {
@@ -30,11 +28,9 @@ export default function Checkout() {
             })
     }
 
-    return (
+    return(
         <>
-            Buy something
-            {clientToken !== '' ? <HostedFields clientToken={clientToken} /> : <div>loading..</div>}
-
+            {clientToken ? <CheckoutForm clientToken={clientToken}/> : "loading..."}
         </>
     )
 }

@@ -10,14 +10,14 @@ export default function HostedFields(props) {
         } else {
             chargePaymentMethod(nonce)
         }
-    }, [nonce])
+    }, [nonce, createHostedFields, props.clientToken])
 
     function createHostedFields(clientToken) {
         client.create({
             authorization: clientToken
         }, function (clientErr, clientInstance) {
             if (clientErr) {
-                alert(clientErr)
+                console.log(clientErr)
                 return
             }
             clientDidCreate(clientInstance)
@@ -91,6 +91,9 @@ export default function HostedFields(props) {
             .then(res => res.json())
             .then(result => {
                 console.log(result)
+                if(result.data.chargePaymentMethod.transaction) {
+                    console.log('cool')
+                }
             })
     }
 

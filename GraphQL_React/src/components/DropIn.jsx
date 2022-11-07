@@ -11,7 +11,7 @@ export default function DropIn(props) {
         } else {
             chargePaymentMethod(nonce)
         }
-    }, [nonce])
+    }, [nonce, createDropIn, props.clientToken])
 
     function createDropIn(clientToken) {
         dropin.create({
